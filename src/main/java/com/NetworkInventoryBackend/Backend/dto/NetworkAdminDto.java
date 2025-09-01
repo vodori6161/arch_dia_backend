@@ -4,16 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+public class NetworkAdminDto {
 
-public class AdminUserDto {
     @Id
-    private String adminId;
-    private String adminName;
-    private String adminPassword;
-
+    private String networkAdminId;
+    private String networkUsername;
+    private String password;
 }

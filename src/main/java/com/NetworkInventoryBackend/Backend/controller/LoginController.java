@@ -1,8 +1,10 @@
 package com.NetworkInventoryBackend.Backend.controller;
 
 import com.NetworkInventoryBackend.Backend.dto.AdminUserDto;
+import com.NetworkInventoryBackend.Backend.dto.NetworkAdminDto;
 import com.NetworkInventoryBackend.Backend.dto.UserDto;
 import com.NetworkInventoryBackend.Backend.service.AdminUserServiceImpl;
+import com.NetworkInventoryBackend.Backend.service.NetworkAdminServiceImpl;
 import com.NetworkInventoryBackend.Backend.service.UserServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,21 @@ public class LoginController {
     private UserServiceImpl userServiceImpl;
     @Autowired
     private AdminUserServiceImpl adminUserServiceImpl;
+
+    @Autowired
+    private NetworkAdminServiceImpl networkAdminServiceImpl;
+
+    @PostMapping("/networkadmin-creation")
+    public NetworkAdminDto createNetworkAdmin(@RequestBody NetworkAdminDto networkAdminDto)
+    {
+        return networkAdminServiceImpl.createNetworkAdmin(networkAdminDto);
+    }
+
+    @PostMapping("/networkadmin")
+    public Boolean loginNetworkAdmin(@RequestBody NetworkAdminDto networkAdminDto, HttpSession session)
+    {
+        return networkAdminServiceImpl.networkAdminLogin(networkAdminDto, session);
+    }
 
     @PostMapping("/user-creation")
     public UserDto createUsers(@RequestBody UserDto userDto)
@@ -42,6 +59,12 @@ public class LoginController {
     @PostMapping("/logout")
     public Boolean logout(HttpSession session) {
         return userServiceImpl.logout(session);
+    }
+
+    @PostMapping("/add-admin")
+    public AdminUserDto addAdmins( @RequestBody  AdminUserDto adminUserDto)
+    {
+        return networkAdminServiceImpl.addAdmin(adminUserDto);
     }
 
 
