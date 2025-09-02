@@ -19,5 +19,6 @@ public class DeletedDevice {
 
     private String ipAddress;
     private String status;
+    private String location; //added
     private String deleted_at;
 }

@@ -35,7 +35,7 @@ public class DeviceController {
         return deviceServiceimpl.deleteDeviceByIp(ipAddress);
     }
 
-    @PostMapping("/restore-device/{ip_address}")
+    @DeleteMapping("/restore-device/{ip_address}")
     public DeviceDto restoreDevice(@PathVariable String ip_address) {
         return deviceServiceimpl.restoreDeviceByIp(ip_address);
     }

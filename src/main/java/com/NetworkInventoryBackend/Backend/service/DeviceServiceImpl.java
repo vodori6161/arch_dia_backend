@@ -3,8 +3,10 @@ package com.NetworkInventoryBackend.Backend.service;
 import com.NetworkInventoryBackend.Backend.dto.DeviceDto;
 import com.NetworkInventoryBackend.Backend.model.DeletedDevice;
 import com.NetworkInventoryBackend.Backend.model.Device;
+import com.NetworkInventoryBackend.Backend.model.RecycledDevice;
 import com.NetworkInventoryBackend.Backend.repository.DeletedDeviceRepository;
 import com.NetworkInventoryBackend.Backend.repository.DeviceRepository;
+import com.NetworkInventoryBackend.Backend.repository.RecycledDeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ public class DeviceServiceImpl implements DeviceService{
     DeviceRepository deviceRepository;
     @Autowired
     DeletedDeviceRepository deletedDeviceRepository;
+    @Autowired
+    RecycledDeviceRepository recycledDeviceRepository;
     @Override
     public DeviceDto createDevice(DeviceDto deviceDto) {
         Device device = new Device();
@@ -29,6 +33,7 @@ public class DeviceServiceImpl implements DeviceService{
         device.setTimeUp(deviceDto.getTimeUp());
         device.setIpAddress(deviceDto.getIpAddress());
         device.setStatus(deviceDto.getStatus());
+        device.setLocation(deviceDto.getLocation()); // added
 
         deviceRepository.save(device);
         return new DeviceDto(
@@ -37,7 +42,8 @@ public class DeviceServiceImpl implements DeviceService{
                 device.getDescription(),
                 device.getTimeUp(),
                 device.getIpAddress(),
-                device.getStatus()
+                device.getStatus(),
+                device.getLocation() //added
         );
     }
 
@@ -54,6 +60,7 @@ public class DeviceServiceImpl implements DeviceService{
                     device.getTimeUp(),
                     device.getIpAddress(),
                     device.getStatus(),
+                    device.getLocation(), //added
 
                     LocalDateTime.now().toString()
 
@@ -66,7 +73,8 @@ public class DeviceServiceImpl implements DeviceService{
                     device.getDescription(),
                     device.getTimeUp(),
                     device.getIpAddress(),
-                    device.getStatus()
+                    device.getStatus(),
+                    device.getLocation() //added
 
             );
         } else {
@@ -79,15 +87,16 @@ public class DeviceServiceImpl implements DeviceService{
         DeletedDevice deletedDevice = deletedDeviceRepository.findByIpAddress(ip_address)
                 .orElseThrow(() -> new RuntimeException("No deleted device found with IP address " + ip_address));
 
-        Device restoredDevice = new Device();
+        RecycledDevice restoredDevice = new RecycledDevice();
         restoredDevice.setDeviceId(deletedDevice.getDeviceId());
         restoredDevice.setDeviceName(deletedDevice.getDeviceName());
         restoredDevice.setDescription(deletedDevice.getDescription());
         restoredDevice.setTimeUp(deletedDevice.getTimeUp());
         restoredDevice.setIpAddress(deletedDevice.getIpAddress());
         restoredDevice.setStatus(deletedDevice.getStatus());
+        restoredDevice.setLocation(deletedDevice.getLocation()); //added
 
-        deviceRepository.save(restoredDevice);
+        recycledDeviceRepository.save(restoredDevice);
 
         // Delete from recycle bin by ip (reliable for Mongo)
         deletedDeviceRepository.deleteByIpAddress(ip_address);
@@ -98,7 +107,8 @@ public class DeviceServiceImpl implements DeviceService{
                 restoredDevice.getDescription(),
                 restoredDevice.getTimeUp(),
                 restoredDevice.getIpAddress(),
-                restoredDevice.getStatus()
+                restoredDevice.getStatus(),
+                restoredDevice.getLocation() //added
         );
     }
     @Override
@@ -111,16 +121,18 @@ public class DeviceServiceImpl implements DeviceService{
             device.setDescription(updatedDevice.getDescription());
             device.setIpAddress((updatedDevice.getIpAddress()));
             device.setStatus(updatedDevice.getStatus());
+            device.setLocation(updatedDevice.getLocation()); //added
 
             deviceRepository.save(device);
 
             return new DeviceDto(
                     device.getDeviceId(),
                     device.getDeviceName(),
-                    device.getIpAddress(),
                     device.getDescription(),
                     device.getTimeUp(),
-                    device.getStatus()
+                    device.getIpAddress(),
+                    device.getStatus(),
+                    device.getLocation() //added
 
             );
         } else {
@@ -139,6 +151,7 @@ public class DeviceServiceImpl implements DeviceService{
             dto.setTimeUp(device.getTimeUp());
             dto.setIpAddress(device.getIpAddress());
             dto.setStatus(device.getStatus());
+            dto.setLocation(device.getLocation()); //added
             return dto;
 
     }
@@ -155,6 +168,7 @@ public class DeviceServiceImpl implements DeviceService{
             dto.setTimeUp(device.getTimeUp());
             dto.setIpAddress(device.getIpAddress());
             dto.setStatus(device.getStatus());
+            dto.setLocation(device.getLocation()); //added
 
             return dto;
         }).collect(Collectors.toList());
@@ -172,6 +186,7 @@ public class DeviceServiceImpl implements DeviceService{
             dto.setTimeUp(device.getTimeUp());
             dto.setIpAddress(device.getIpAddress());
             dto.setStatus(device.getStatus());
+            dto.setLocation(device.getLocation()); //added
 
             return dto;
         }).collect(Collectors.toList());
