@@ -16,8 +16,9 @@ public class Device {
     private String deviceName;
     private String description;
     private String timeUp;
-    private String  ipAddress;
+    private String ipAddress;
     private String status;
+    private String location; //added
 
 
 }
