@@ -26,7 +26,7 @@ public class UserServiceImpl implements  UserService {
 
         // Encrypt the password
         String encryptedPassword = passwordEncoder.encode(userDto.getUserPassword());
-        user.setUserPasword(encryptedPassword);
+        user.setUserPassword(encryptedPassword);
 
         userRepository.save(user);
 
@@ -37,7 +37,7 @@ public class UserServiceImpl implements  UserService {
     }
     public Boolean userLogin(UserDto userDto, HttpSession session) {
         User user = userRepository.findByUserName(userDto.getUserName());
-        if (user != null && passwordEncoder.matches(userDto.getUserPassword(), user.getUserPasword())) {
+        if (user != null && passwordEncoder.matches(userDto.getUserPassword(), user.getUserPassword())) {
             session.setAttribute("userId", user.getUserId());
             session.setAttribute("role", "USER");
             return true;
