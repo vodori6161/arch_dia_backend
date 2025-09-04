@@ -2,10 +2,10 @@ package com.NetworkInventoryBackend.Backend.service;
 
 import com.NetworkInventoryBackend.Backend.dto.AdminUserDto;
 import com.NetworkInventoryBackend.Backend.dto.NetworkAdminDto;
-import com.NetworkInventoryBackend.Backend.dto.UserDto;
+import com.NetworkInventoryBackend.Backend.model.LoginActivityLog;
 import com.NetworkInventoryBackend.Backend.model.AdminUser;
 import com.NetworkInventoryBackend.Backend.model.NetworkAdmin;
-import com.NetworkInventoryBackend.Backend.model.User;
+import com.NetworkInventoryBackend.Backend.repository.LoginActivityLogRepository;
 import com.NetworkInventoryBackend.Backend.repository.AdminUserRepository;
 import com.NetworkInventoryBackend.Backend.repository.NetworkAdminRepository;
 import jakarta.servlet.http.HttpSession;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 @Service
 public class NetworkAdminServiceImpl implements NetworkAdminService{
@@ -22,6 +23,9 @@ public class NetworkAdminServiceImpl implements NetworkAdminService{
 
     @Autowired
     private AdminUserRepository adminUserRepository;
+
+    @Autowired
+    private LoginActivityLogRepository loginActivityLogRepository;
 
     @Override
     public NetworkAdminDto createNetworkAdmin(NetworkAdminDto networkAdminDto) {
@@ -47,6 +51,17 @@ public class NetworkAdminServiceImpl implements NetworkAdminService{
         if (user != null && passwordEncoder.matches(networkAdminDto.getPassword(), user.getPassword())) {
             session.setAttribute("NetworkAdminId", user.getNetworkAdminId());
             session.setAttribute("role", "NetworkAdmin");
+
+            // Save login log
+            loginActivityLogRepository.save(LoginActivityLog.builder()
+                    .userId(user.getNetworkAdminId())
+                    .userName(user.getNetworkUsername())
+                    .role("NetworkAdmin")
+                    .actionType("LOGIN")
+                    .description("Network admin logged in")
+                    .timestamp(LocalDateTime.now())
+                    .build());
+
             return true;
         }
         return false;
@@ -54,7 +69,20 @@ public class NetworkAdminServiceImpl implements NetworkAdminService{
 
     @Override
     public Boolean logout(HttpSession session) {
-        String role = (String) session.getAttribute("role");
+        String userId = (String) session.getAttribute("NetworkAdminId");
+
+        if (userId != null) {
+            NetworkAdmin user = networkAdminRepository.findById(userId).orElse(null);
+            loginActivityLogRepository.save(LoginActivityLog.builder()
+                    .userId(userId)
+                    .userName(user != null ? user.getNetworkUsername() : null)
+                    .role("NetworkAdmin")
+                    .actionType("LOGOUT")
+                    .description("Network admin logged out")
+                    .timestamp(LocalDateTime.now())
+                    .build());
+        }
+
         session.invalidate();
         return true;
 
