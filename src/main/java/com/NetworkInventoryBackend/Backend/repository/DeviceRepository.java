@@ -13,6 +13,7 @@ public interface DeviceRepository extends MongoRepository<Device,String> {
 
 
     Optional<Device> findByIpAddress(String ipAddress);
+    Boolean findByDeviceId(String deviceId);
 
 
 

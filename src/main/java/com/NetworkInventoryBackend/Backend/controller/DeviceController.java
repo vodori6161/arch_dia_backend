@@ -1,6 +1,7 @@
 package com.NetworkInventoryBackend.Backend.controller;
 
 import com.NetworkInventoryBackend.Backend.dto.DeviceDto;
+import com.NetworkInventoryBackend.Backend.model.DeletedDevice;
 import com.NetworkInventoryBackend.Backend.service.DeviceService;
 import com.NetworkInventoryBackend.Backend.service.DeviceServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,10 @@ public class DeviceController {
           DeviceDto result = deviceServiceimpl.searchDevice(ip_address);
           return result;
 
+    }
+    @GetMapping("/list-of-deleted-devices")
+    public List<DeletedDevice> listOfDeviceDeleted(){
+        return deviceServiceimpl.listOfDeletedDevices();
     }
 
 
