@@ -19,6 +19,7 @@ public class Device {
     private String ipAddress;
     private String status;
     private String location; //added
+    private String createdAt; //timestamp
 
 
 }

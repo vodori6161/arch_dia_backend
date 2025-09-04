@@ -27,13 +27,20 @@ public class DeviceServiceImpl implements DeviceService{
     @Override
     public DeviceDto createDevice(DeviceDto deviceDto) {
         Device device = new Device();
+        if(deviceRepository.findByIpAddress(deviceDto.getIpAddress()).isPresent())
+
+        {
+            throw new IllegalStateException("Device with IP " + deviceDto.getIpAddress() + " already exists.");
+        }
+
         device.setDeviceId(UUID.randomUUID().toString());
         device.setDeviceName(deviceDto.getDeviceName());
         device.setDescription(deviceDto.getDescription());
         device.setTimeUp(deviceDto.getTimeUp());
         device.setIpAddress(deviceDto.getIpAddress());
         device.setStatus(deviceDto.getStatus());
-        device.setLocation(deviceDto.getLocation()); // added
+        device.setLocation(deviceDto.getLocation());
+        device.setCreatedAt( LocalDateTime.now().toString());// added
 
         deviceRepository.save(device);
         return new DeviceDto(
@@ -43,7 +50,8 @@ public class DeviceServiceImpl implements DeviceService{
                 device.getTimeUp(),
                 device.getIpAddress(),
                 device.getStatus(),
-                device.getLocation() //added
+                device.getLocation(),
+                device.getCreatedAt()//added
         );
     }
 
@@ -74,7 +82,8 @@ public class DeviceServiceImpl implements DeviceService{
                     device.getTimeUp(),
                     device.getIpAddress(),
                     device.getStatus(),
-                    device.getLocation() //added
+                    device.getLocation() ,
+                    device.getCreatedAt()//added
 
             );
         } else {
@@ -108,7 +117,8 @@ public class DeviceServiceImpl implements DeviceService{
                 restoredDevice.getTimeUp(),
                 restoredDevice.getIpAddress(),
                 restoredDevice.getStatus(),
-                restoredDevice.getLocation() //added
+                restoredDevice.getLocation(),
+                restoredDevice.getCreatedAt()//added
         );
     }
     @Override
@@ -122,6 +132,7 @@ public class DeviceServiceImpl implements DeviceService{
             device.setIpAddress((updatedDevice.getIpAddress()));
             device.setStatus(updatedDevice.getStatus());
             device.setLocation(updatedDevice.getLocation()); //added
+            device.setCreatedAt(LocalDateTime.now().toString());
 
             deviceRepository.save(device);
 
@@ -132,7 +143,11 @@ public class DeviceServiceImpl implements DeviceService{
                     device.getTimeUp(),
                     device.getIpAddress(),
                     device.getStatus(),
-                    device.getLocation() //added
+                    device.getLocation(),
+                    device.getCreatedAt()
+
+
+                    //added
 
             );
         } else {
@@ -191,6 +206,13 @@ public class DeviceServiceImpl implements DeviceService{
             return dto;
         }).collect(Collectors.toList());
     }
+    @Override
+    public List<DeletedDevice> listOfDeletedDevices(){
+        List<DeletedDevice> deletedDevices = deletedDeviceRepository.findAll();
+        return deletedDevices;
+
+    }
+
 
 
 

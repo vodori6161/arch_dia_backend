@@ -21,4 +21,5 @@ public class RecycledDevice {
     private String status;
 
     private String location; //added
+    private String createdAt;
 }

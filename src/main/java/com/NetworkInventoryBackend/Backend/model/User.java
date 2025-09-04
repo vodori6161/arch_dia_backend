@@ -15,5 +15,5 @@ public class User {
     @Id
     private String userId;
     private String userName;
-    private String userPasword;
+    private String userPassword;
 }
