@@ -1,6 +1,7 @@
 package com.NetworkInventoryBackend.Backend.service;
 
 import com.NetworkInventoryBackend.Backend.dto.DeviceDto;
+import com.NetworkInventoryBackend.Backend.model.DeletedDevice;
 import com.NetworkInventoryBackend.Backend.model.Device;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public interface DeviceService {
     public DeviceDto searchDevice(String ipAddress);
     public List<DeviceDto> listOfDevices();
     public List<DeviceDto> listOfRecycledDevices();
+    public List<DeletedDevice>  listOfDeletedDevices();
 
 
 }
