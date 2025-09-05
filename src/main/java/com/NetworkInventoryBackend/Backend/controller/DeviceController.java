@@ -2,6 +2,8 @@ package com.NetworkInventoryBackend.Backend.controller;
 
 import com.NetworkInventoryBackend.Backend.dto.DeviceDto;
 import com.NetworkInventoryBackend.Backend.model.DeletedDevice;
+import com.NetworkInventoryBackend.Backend.model.DeviceActivityLog;
+import com.NetworkInventoryBackend.Backend.repository.DeviceActivityLogRepository;
 import com.NetworkInventoryBackend.Backend.service.DeviceActivityLogService;
 import com.NetworkInventoryBackend.Backend.service.DeviceService;
 import com.NetworkInventoryBackend.Backend.service.DeviceServiceImpl;
@@ -18,6 +20,9 @@ import java.util.List;
 public class DeviceController {
     @Autowired
     private DeviceServiceImpl deviceServiceimpl;
+
+  @Autowired
+  private DeviceActivityLogRepository deviceActivityLogRepository;
 
     @Autowired
     private DeviceActivityLogService deviceActivityLogService;
@@ -153,6 +158,14 @@ public class DeviceController {
     @GetMapping("/list-of-deleted-devices")
     public List<DeletedDevice> listOfDeviceDeleted(){
         return deviceServiceimpl.listOfDeletedDevices();
+    }
+
+    @GetMapping("/list-of-log-devices")
+    public List<DeviceActivityLog> listOfLogDevice(){
+        List<DeviceActivityLog> logdevices = deviceActivityLogRepository.findAll();
+
+        return logdevices;
+
     }
 
 
