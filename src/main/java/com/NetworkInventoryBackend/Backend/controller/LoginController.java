@@ -58,7 +58,18 @@ public class LoginController {
 
     @PostMapping("/logout")
     public Boolean logout(HttpSession session) {
-        return userServiceImpl.logout(session);
+        String role = (String) session.getAttribute("role");
+
+        if ("NetworkAdmin".equalsIgnoreCase(role)) {
+            return networkAdminServiceImpl.logout(session);
+        } else if ("Admin".equalsIgnoreCase(role)) {
+            return adminUserServiceImpl.logout(session);
+        } else if ("User".equalsIgnoreCase(role)) {
+            return userServiceImpl.logout(session);
+        }
+        // already logged out or invalid session
+        return false;
+
     }
 
     @PostMapping("/add-admin")

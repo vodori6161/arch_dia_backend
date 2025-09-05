@@ -1,13 +1,16 @@
 package com.NetworkInventoryBackend.Backend.service;
 
 import com.NetworkInventoryBackend.Backend.dto.UserDto;
+import com.NetworkInventoryBackend.Backend.model.LoginActivityLog;
 import com.NetworkInventoryBackend.Backend.model.User;
+import com.NetworkInventoryBackend.Backend.repository.LoginActivityLogRepository;
 import com.NetworkInventoryBackend.Backend.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 @Service
 public class UserServiceImpl implements  UserService {
@@ -16,6 +19,8 @@ public class UserServiceImpl implements  UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private LoginActivityLogRepository loginActivityLogRepository;
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -40,13 +45,37 @@ public class UserServiceImpl implements  UserService {
         if (user != null && passwordEncoder.matches(userDto.getUserPassword(), user.getUserPassword())) {
             session.setAttribute("userId", user.getUserId());
             session.setAttribute("role", "USER");
+
+            loginActivityLogRepository.save(LoginActivityLog.builder()
+                    .userId(user.getUserId())
+                    .userName(user.getUserName())
+                    .role("USER")
+                    .actionType("LOGIN")
+                    .description("User logged in")
+                    .timestamp(LocalDateTime.now())
+                    .build());
+
             return true;
         }
         return false;
     }
 
     public Boolean logout(HttpSession session) {
-        String role = (String) session.getAttribute("role");
+
+        String userId = (String) session.getAttribute("userId");
+
+        if (userId != null) {
+            User user = userRepository.findById(userId).orElse(null);
+            loginActivityLogRepository.save(LoginActivityLog.builder()
+                    .userId(userId)
+                    .userName(user != null ? user.getUserName() : null)
+                    .role("USER")
+                    .actionType("LOGOUT")
+                    .description("User logged out")
+                    .timestamp(LocalDateTime.now())
+                    .build());
+        }
+
         session.invalidate();
         return true;
     }
